@@ -13,18 +13,18 @@
             form.addEventListener('submit', function(e){
               e.preventDefault();
               var name = this.querySelector('.name').value,
-                  date = this.querySelector('.date').value;
-              var error = this.querySelector('.error');
-              //console.log(this, error);
+                  date = this.querySelector('.date').value,
+                  error = this.querySelector('.error');
+              
               if(name == '' || date == '') {
                 error.innerHTML = 'please enter both values';
               } else {
                 var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
+                /*xhttp.onreadystatechange = function() {
                   if (this.readyState == 4 && this.status == 200) {
                     error.innerHTML = this.responseText;
                   }
-                };
+                };*/
                 xhttp.open("GET", "http://localhost:8000/update?name=" + name + "&date=" + date, true);
                 xhttp.send();
               } 
@@ -32,33 +32,6 @@
           }
           
           updateJson();
-          
-          
-          function checkDate() {
-            var form = document.querySelector('.js-form');
-            var error = form.querySelector('.error');
-            var timer = 0;
-            
-            var today = new Date();
-            var day = today.getDate();
-            var monthRaw = today.getMonth() + 1;
-            var monthFormat = monthRaw < 10 ? '0' + monthRaw : monthRaw;
-            var currentDate = day + '.' + monthFormat;
-            console.log(currentDate);
-            
-            setInterval(function() {
-              var xhttp = new XMLHttpRequest();
-              xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                  error.innerHTML = this.responseText +' (request has been sending for ' + (timer++) + 'times)';
-                }
-              };
-              xhttp.open("GET", "http://localhost:8000/check?date="+currentDate, true);
-              xhttp.send();
-            }, 2000);
-          }
-          
-          checkDate();
         </script>
     </body>
 </html>

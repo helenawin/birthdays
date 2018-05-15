@@ -15,48 +15,63 @@ app.use(allowCrossDomain);
 
 /*listen for json update*/
 app.get('/update', function(req, res) {
-  
-  fs.readFile('data.json', function(err, data) {
+  update(req.query, 'data.json');       //main function to update file
+});
+
+app.listen(8000);
+
+/*start current date checking*/
+var today = new Date(); 
+setInterval(function() {
+  check(today, 'data.json');       //main function to check file
+}, 2000);
+
+
+/*update json*/
+function update(newData, file) {
+  fs.readFile(file, function(err, data) {
     if (err) {
-      throw err;
+      //throw err;
+      console.log('something went wrong, check if file exists');
     } else { 
       var allItems = JSON.parse(data);
-      allItems.push(req.query);
-      fs.writeFile('data.json', JSON.stringify(allItems), function (err) {
+      allItems.push(newData);
+      fs.writeFile(file, JSON.stringify(allItems), function (err) {
         if (err) {
-          throw err;
+          //throw err;
+          console.log('can\'t write new data');
         } else {
           var newItem = allItems.slice(-1)[0];
-          res.send('new item successfully added and is '+ newItem.name + ' - ' + newItem.date);
-          console.log(allItems);
+          console.log('new item successfully added: '+ newItem.name + ' - ' + newItem.date);
+          //res.send('new item successfully added and is '+ newItem.name + ' - ' + newItem.date);
         } 
       });
     }
   });
+}
 
-});
 
-
-/*listen for start current date checking*/
-app.get('/check', function(req, res) {
-    var date = req.query.date;
-    fs.readFile('data.json', function(err, data) {
-      if (err) {
-        throw err;
-      } else {
-        var allItems = JSON.parse(data),
-            curItems = '';
-        allItems.forEach(function(item, index) {
-          //console.log(item.date);
-          var politeDate = item.date.slice(0, -5);
-          if(politeDate == date) {
-            curItems += 'today is ' + item.name + '\'s birthday: ' + item.date + '<br>';
-          }
-        });
-        res.send(curItems); 
-        console.log(curItems);
-      }
-    });
-});
-
-app.listen(8000);
+/*check json*/
+function check(date, file) {
+  var day = date.getDate();
+  var monthRaw = date.getMonth() + 1;
+  var monthFormat = monthRaw < 10 ? '0' + monthRaw : monthRaw;
+  var currentDate = day + '.' + monthFormat;
+  console.log(currentDate);
+  
+  fs.readFile(file, function(err, data) {
+    if (err) {
+      //throw err;
+       console.log('something went wrong, check if file exists');
+    } else {
+      var allItems = JSON.parse(data);
+      allItems.forEach(function(item, index) {
+        var politeDate = item.date.slice(0, -5);
+        if(politeDate == currentDate) {
+          console.log('today is ' + item.name + '\'s birthday: ' + item.date);
+        }
+      });
+      //res.send(curItems);  
+    }
+  });
+}
