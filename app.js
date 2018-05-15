@@ -15,7 +15,7 @@ app.use(allowCrossDomain);
 
 /*listen for json update*/
 app.get('/update', function(req, res) {
-  update(req.query, 'data.json');       //main function to update file
+  update(req.query, 'data.json');  
 });
 
 app.listen(8000);
@@ -23,7 +23,7 @@ app.listen(8000);
 /*start current date checking*/
 var today = new Date(); 
 setInterval(function() {
-  check(today, 'data.json');       //main function to check file
+  check(today, 'data.json'); 
 }, 2000);
 
 
